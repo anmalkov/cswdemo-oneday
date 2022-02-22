@@ -25,12 +25,14 @@ app.MapGet("/", async (ILoggerFactory loggerFactory, IHttpClientFactory httpClie
         var url = "http://localhost:3500/v1.0/invoke/forecast/method/forecast";
         var forecast = await client.GetFromJsonAsync<List<WeatherForecast>>(url);
 
-        return Results.Ok(forecast?.FirstOrDefault());
+        logger.LogInformation($"Received {forecast?.Count} forecasts");
+
+        return forecast?.FirstOrDefault();
     }
     catch (Exception ex)
     {
         logger.LogError(ex, "An error occurred while processing the request");
-        return Results.StatusCode(500);
+        throw;
     }
 })
 .WithName("GetWeatherForecastForOneDay");
